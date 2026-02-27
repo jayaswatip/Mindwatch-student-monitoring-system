@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - MindWatch</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-animation"></div>
+  
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-brain"></i>
+        MindWatch
+      </div>
+      <nav>
+        <a href="index.html">
+          <i class="fas fa-home"></i> Home
+        </a>
+        <a href="dashboard.html" class="active">
+          <i class="fas fa-chart-line"></i> Dashboard
+        </a>
+        <a href="login.html">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+        <a href="signup.html">
+          <i class="fas fa-user-plus"></i> Signup
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <div class="dashboard-title">
+        <h1>
+          <i class="fas fa-chart-line"></i>
+          Student Attention Dashboard
+        </h1>
+        <p>Real-time monitoring and analytics • Last updated: <span id="lastUpdate">Just now</span></p>
+      </div>
+      <div class="dashboard-controls">
+        <button class="btn btn-secondary" onclick="exportData()">
+          <i class="fas fa-download"></i> Export
+        </button>
+        <button class="btn btn-primary" onclick="refreshDashboard()">
+          <i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon listening">
+          <i class="fas fa-eye"></i>
+        </div>
+        <div class="stat-content">
+          <h3 id="listeningCount">0</h3>
+          <p>Students Listening</p>
+          <span class="stat-trend positive">
+            <i class="fas fa-arrow-up"></i> +5%
+          </span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon not-listening">
+          <i class="fas fa-eye-slash"></i>
+        </div>
+        <div class="stat-content">
+          <h3 id="notListeningCount">0</h3>
+          <p>Not Listening</p>
+          <span class="stat-trend negative">
+            <i class="fas fa-arrow-down"></i> -2%
+          </span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon average">
+          <i class="fas fa-percentage"></i>
+        </div>
+        <div class="stat-content">
+          <h3 id="averageAttention">0%</h3>
+          <p>Average Attention</p>
+          <span class="stat-trend neutral">
+            <i class="fas fa-minus"></i> 0%
+          </span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon confidence">
+          <i class="fas fa-brain"></i>
+        </div>
+        <div class="stat-content">
+          <h3 id="averageConfidence">0%</h3>
+          <p>AI Confidence</p>
+          <span class="stat-trend positive">
+            <i class="fas fa-arrow-up"></i> +3%
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3><i class="fas fa-chart-line"></i> Attention Trends</h3>
+          <select class="chart-filter">
+            <option value="1h">Last Hour</option>
+            <option value="24h" selected>Last 24 Hours</option>
+            <option value="7d">Last 7 Days</option>
+          </select>
+        </div>
+        <div class="chart-container">
+          <canvas id="attentionChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3><i class="fas fa-chart-pie"></i> Attention Distribution</h3>
+          <div class="chart-legend">
+            <span class="legend-item listening">
+              <span class="legend-color"></span> Listening
+            </span>
+            <span class="legend-item not-listening">
+              <span class="legend-color"></span> Not Listening
+            </span>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="distributionChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Students Table -->
+    <div class="table-container">
+      <div class="table-header">
+        <div class="table-title">
+          <h3><i class="fas fa-users"></i> Student Status Overview</h3>
+          <span class="table-count">Monitoring <span id="studentCount">20</span> students</span>
+        </div>
+        <div class="table-controls">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search students..." id="searchInput">
+          </div>
+          <select class="filter-select" id="statusFilter">
+            <option value="all">All Students</option>
+            <option value="listening">Listening Only</option>
+            <option value="not-listening">Not Listening Only</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="students-table">
+          <thead>
+            <tr>
+              <th><i class="fas fa-hashtag"></i> ID</th>
+              <th><i class="fas fa-user"></i> Student Name</th>
+              <th><i class="fas fa-clock"></i> Last Check</th>
+              <th><i class="fas fa-percentage"></i> Confidence</th>
+              <th><i class="fas fa-eye"></i> Status</th>
+              <th><i class="fas fa-chart-bar"></i> History</th>
+              <th><i class="fas fa-cog"></i> Actions</th>
+            </tr>
+          </thead>
+          <tbody id="studentTable">
+            <!-- Filled by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Alert Panel -->
+    <div id="alertPanel" class="alert-panel">
+      <div class="alert-header">
+        <h4><i class="fas fa-exclamation-triangle"></i> Attention Alerts</h4>
+        <button onclick="closeAlerts()" class="close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="alertsList" class="alerts-list">
+        <!-- Alerts will be added here -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Floating Action Buttons -->
+  <div class="fab-container">
+    <button class="fab fab-primary" onclick="refreshDashboard()" title="Refresh Dashboard">
+      <i class="fas fa-sync-alt"></i>
+    </button>
+    <button class="fab fab-secondary" onclick="toggleAlerts()" title="Toggle Alerts" id="alertToggle">
+      <i class="fas fa-bell"></i>
+      <span class="fab-badge" id="alertBadge">0</span>
+    </button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
